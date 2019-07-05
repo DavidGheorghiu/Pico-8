@@ -1,7 +1,7 @@
 function _init()
 	player={
-		x=20,
-		y=100
+		x=21,
+		y=101
 	}
 	dx=0 ; dy=0
 end
@@ -12,28 +12,26 @@ end
 
 function _draw()
 	cls()
-	spr(0,1,1)
-	map(0,0,10,10)
+	map(0,0,0,0)
 	spr(1,player.x,player.y)
-	print(player.x/8 .." "..player.y/8)
 end
 
 function movement()
- dx=0 ; dy=0
-	if(btn(0)) then move=true dx=-1 end
-	if(btn(1)) then move=true dx=1 end
-	if(btn(2)) then move=true dy=-1 end
-	if(btn(3)) then move=true dy=1 end
+ dx=0 ; dy=0 -- stop moving when you let go of movement keys
+	if(btn(0)) then dx=-1 end -- x-axis movement
+	if(btn(1)) then dx=1 end
+	if(btn(2)) then dy=-1 end -- y-axis movement
+	if(btn(3)) then dy=1 end
 	
-	if(collision(player.x+dx,player.y,9,9))
+	if(collision(player.x+dx,player.y,7,7)) -- check x-axis collision
 		then dx=0
 	end
 	
-	if(collision(player.x,player.y+dy,9,9))
+	if(collision(player.x,player.y+dy,7,7)) -- check y-axis collsiion
 		then dy=0
 	end
 	
-	player.x += dx ; player.y += dy
+	player.x+=dx ; player.y+=dy
 end
 
 function collision(x,y,w,h)
