@@ -9,25 +9,18 @@ function _init()
   y = stat(33),
   click_state = 0
  }
- 
- nodes = {}
-
- test_x = 0 ; test_y = 0
 end
 
 function _update()
  _cursor()
- --_level_one(0, 0)
 end
 
 function _draw()
  cls()
  map(0, 0, 0, 0)
  _level_one(0, 0)
- spr(1, player.x, player.y) -- player
  poke(0x5f2d, 1) -- get mouse
  spr(2, cursor.x, cursor.y) -- cursor position
-	print(test_x.. ' '..test_y)
 end
 
 
@@ -46,12 +39,13 @@ function _move() -- temporary
 end
 
 function _level_one()
+	_player_spawn()
  _loop_grid(0, 0)
 end
 
 function _loop_grid(grid_x, grid_y)
- for x=grid_x, grid_x + 7 do
-  for y=grid_y, grid_y + 7 do
+ for x=grid_x, grid_x + 15 do
+  for y=grid_y, grid_y + 15 do
   	if(fget(mget(x, y), 0))
   		then _check_neighbours(grid_x, grid_y, x, y)  
   	end
@@ -61,16 +55,18 @@ end
 
 function _check_neighbours(grid_x, grid_y, x, y)
  -- check right
- for i=x+1, 7 do
- 	if(fget(mget(i, y), 0))
- 		then _draw_path_x(x, y, i)
+ right_found = false
+ down_found = false
+ for i=x+1, 15 do
+ 	if(fget(mget(i, y), 0) and right_found == false)
+ 		then _draw_path_x(x, y, i) right_found = true
  	end
  end
  
  -- check down
- for i=y+1, 7 do
- 	if(fget(mget(x, i), 0))	
- 		then _draw_path_y(x, y, i)
+ for i=y+1, 15 do
+ 	if(fget(mget(x, i), 0) and down_found == false)	
+ 		then _draw_path_y(x, y, i) ; down_found = true
  	end
  end
 end
@@ -85,4 +81,8 @@ function _draw_path_y(x, y, next_y)
 	for i=y+1, next_y-1 do
 		spr(4, x*8, i*8)
 	end
+end
+
+function _player_spawn()
+
 end
