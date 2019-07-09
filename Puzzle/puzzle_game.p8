@@ -9,6 +9,10 @@ function _init()
   y = stat(33),
   click_state = 0
  }
+
+ level = 1
+ current_level = 0
+ test = 0
 end
 
 function _update()
@@ -17,8 +21,8 @@ end
 
 function _draw()
  cls()
- map(0, 0, 0, 0)
- _level_one(0, 0)
+ _load_level(level)
+ spr(1, player.x, player.y)
  poke(0x5f2d, 1) -- get mouse
  spr(2, cursor.x, cursor.y) -- cursor position
 end
@@ -39,7 +43,6 @@ function _move() -- temporary
 end
 
 function _level_one()
-	_player_spawn()
  _loop_grid(0, 0)
 end
 
@@ -83,6 +86,25 @@ function _draw_path_y(x, y, next_y)
 	end
 end
 
-function _player_spawn()
+-- todo: needs more work
+function _player_spawn(grid_x, grid_y)
+	for i=grid_x, grid_x + 15 do
+		for j=grid_y, grid_y + 15 do
+		 if(fget(mget(i, j), 1))
+		 	then player.x = i*8 ; player.y = j*8
+		 end
+		end
+	end
+end
 
+function _load_level(level)
+	if(level == 1) then
+		map(0, 0, 0, 0)
+		_level_one(0, 0)
+	end
+	
+	if(current_level ~= level)
+		then _player_spawn(0, 0)
+	end
+	current_level = level
 end
