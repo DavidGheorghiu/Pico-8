@@ -10,9 +10,13 @@ function _init()
   click_state = 0
  }
 
+	grid = { -- map grid sx and sy
+		sx = 0,
+		sy = 0
+	}
+	
  level = 1
  current_level = 0
- test = 0
 end
 
 function _update()
@@ -25,6 +29,7 @@ function _draw()
  spr(1, player.x, player.y)
  poke(0x5f2d, 1) -- get mouse
  spr(2, cursor.x, cursor.y) -- cursor position
+	print(player.x .. ' '..player.y)
 end
 
 
@@ -38,8 +43,17 @@ function _cursor()
 end
 
 function _move() -- temporary
- player.x = cursor.x
- player.y = cursor.y
+ for i=cursor.x, cursor.x-8, -1 do
+ 	if(i%8 == 0)
+ 		then player.x = i ; break
+ 	end
+ end
+ 
+ for i=cursor.y, cursor.y-8, -1 do
+ 	if(i%8 == 0)
+ 		then player.y = i ; break
+ 	end
+ end
 end
 
 function _level_one()
@@ -101,10 +115,11 @@ function _load_level(level)
 	if(level == 1) then
 		map(0, 0, 0, 0)
 		_level_one(0, 0)
+		grid.x = 0; grid.y = 0
 	end
 	
 	if(current_level ~= level)
-		then _player_spawn(0, 0)
+		then _player_spawn(grid.x, grid.y)
 	end
 	current_level = level
 end
