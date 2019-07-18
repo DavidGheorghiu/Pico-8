@@ -20,6 +20,7 @@ function _init()
 	
  level = 1
  current_level = 0
+ test = "0"
 end
 
 function _update()
@@ -32,7 +33,8 @@ function _draw()
  spr(1, player.x, player.y)
  poke(0x5f2d, 1) -- get mouse
  spr(2, cursor.x, cursor.y) -- cursor position
-	print(player.x .. ' '..player.y)
+ print(player.x/8 .. ' '..player.y/8)
+ print(test)
 end
 
 
@@ -48,15 +50,53 @@ end
 function _move() -- temporary
  for i=cursor.x, cursor.x-8, -1 do
  	if(i%8 == 0)
- 		then player.x = i ; break
+ 		then _movetonode(i, 0) ; break
  	end
  end
  
  for i=cursor.y, cursor.y-8, -1 do
  	if(i%8 == 0)
- 		then player.y = i ; break
+ 		then _movetonode(0, i) ; break
  	end
  end
+end
+
+function _movetonode(x, y)
+ 
+	if(x ~= 0) then
+		if(x - player.x < 0) then
+			for i = player.x/8-1, x/8+1, -1 do
+				if(fget(mget(i, player.y/8), 0))
+					then return
+				end
+			end
+		else
+			for i = player.x/8+1, x/8-1 do
+				if(fget(mget(i, player.y/8), 0))
+					then return
+				end
+			end
+		end
+		player.x = x
+	end
+
+	if(y ~= 0) then -- this is bugged, preventing user from going to y = 0, change it
+		if(y - player.y < 0) then
+			for i = player.y/8-1, y/8+1 do
+				test = i .. ' ' .. y/8
+				if(fget(mget(player.x/8, i), 0))
+					then test = 'ok' return
+				end
+			end
+		else
+			for i = player.y/8+1, y/8-1 do
+				if(fget(mget(player.x/8, i), 0))
+					then return
+				end
+			end
+		end
+		player.y = y
+	end
 end
 
 function _level_one()
@@ -103,7 +143,6 @@ function _draw_path_y(x, y, next_y)
 	end
 end
 
--- todo: needs more work
 function _player_spawn(grid_x, grid_y)
 	for i=grid_x, grid_x + 15 do
 		for j=grid_y, grid_y + 15 do
