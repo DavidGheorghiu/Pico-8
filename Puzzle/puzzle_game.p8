@@ -2,67 +2,66 @@ pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
 function _init()
- player = { -- player object
-  x = 20,
-  y = 20
- }
+	player = { -- player object
+		x = 20,
+		y = 20
+	}
 
- cursor = { -- cursor object
-  x = stat(32),
-  y = stat(33),
-  click_state = 0
- }
+	cursor = { -- cursor object
+		x = stat(32),
+		y = stat(33),
+		click_state = 0
+	}
 
 	grid = { -- map grid sx and sy
 		sx = 0,
 		sy = 0
 	}
 	
- level = 1
- current_level = 0
- test = "0"
+	level = 1
+	current_level = 0
+	test = "0"
 end
 
-function _update()
- _cursor()
+function _update60()
+	_cursor()
 end
 
 function _draw()
- cls()
- _load_level(level)
- spr(1, player.x, player.y)
- poke(0x5f2d, 1) -- get mouse
- spr(2, cursor.x, cursor.y) -- cursor position
- print(player.x/8 .. ' '..player.y/8)
- print(test)
+	cls()
+	_load_level(level)
+	spr(1, player.x, player.y)
+	poke(0x5f2d, 1) -- get mouse
+	spr(2, cursor.x, cursor.y) -- cursor position
+	print(player.x/8 .. ' '..player.y/8)
+	print(test)
 end
 
 
 function _cursor()
- cursor.x = stat(32)
- cursor.y = stat(33)
- click_state = stat(34)
- if(fget(mget(cursor.x/8, cursor.y/8), 0) and click_state == 1)
-  then _move()
- end
+	cursor.x = stat(32)
+	cursor.y = stat(33)
+	click_state = stat(34)
+	if(fget(mget(cursor.x/8, cursor.y/8), 0) and click_state == 1)
+		then _move()
+	end
 end
 
 function _move() -- temporary
- for i=cursor.x, cursor.x-8, -1 do
- 	if(i%8 == 0)
- 		then _movetonode(i, 0) ; break
- 	end
- end
+	for i=cursor.x, cursor.x-8, -1 do
+		if(i%8 == 0)
+			then _movetonode(i, 0) ; break
+		end
+	end
  
- for i=cursor.y, cursor.y-8, -1 do
- 	if(i%8 == 0)
- 		then _movetonode(0, i) ; break
- 	end
- end
+	for i=cursor.y, cursor.y-8, -1 do
+		if(i%8 == 0)
+			then _movetonode(0, i) ; break
+		end
+	end
 end
 
 function _movetonode(x, y)
- 
 	if(x ~= 0) then
 		if(x - player.x < 0) then
 			for i = player.x/8-1, x/8+1, -1 do
@@ -100,35 +99,35 @@ function _movetonode(x, y)
 end
 
 function _level_one()
- _loop_grid(0, 0)
+	_loop_grid(0, 0)
 end
 
 function _loop_grid(grid_x, grid_y)
- for x=grid_x, grid_x + 15 do
-  for y=grid_y, grid_y + 15 do
-  	if(fget(mget(x, y), 0))
-  		then _check_neighbours(grid_x, grid_y, x, y)  
-  	end
-  end
- end
+	for x=grid_x, grid_x + 15 do
+		for y=grid_y, grid_y + 15 do
+			if(fget(mget(x, y), 0))
+				then _check_neighbours(grid_x, grid_y, x, y)  
+			end
+		end
+	end
 end
 
 function _check_neighbours(grid_x, grid_y, x, y)
- -- check right
- right_found = false
- down_found = false
- for i=x+1, 15 do
- 	if(fget(mget(i, y), 0) and right_found == false)
- 		then _draw_path_x(x, y, i) right_found = true
- 	end
- end
+	-- check right
+	right_found = false
+	down_found = false
+	for i=x+1, 15 do
+		if(fget(mget(i, y), 0) and right_found == false)
+			then _draw_path_x(x, y, i) right_found = true
+		end
+	end
  
- -- check down
- for i=y+1, 15 do
- 	if(fget(mget(x, i), 0) and down_found == false)	
- 		then _draw_path_y(x, y, i) ; down_found = true
- 	end
- end
+	-- check down
+	for i=y+1, 15 do
+		if(fget(mget(x, i), 0) and down_found == false)	
+			then _draw_path_y(x, y, i) ; down_found = true
+		end
+	end
 end
 
 function _draw_path_x(x, y, next_x)
